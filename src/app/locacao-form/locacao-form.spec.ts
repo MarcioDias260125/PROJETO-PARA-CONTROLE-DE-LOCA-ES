@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-// 1. Corrigimos a importação para LocacaoFormComponent
-import { LocacaoFormComponent } from './locacao-form'; 
+import { LocacaoFormComponent } from './locacao-form';
+import { provideHttpClient } from '@angular/common/http';
+import { provideRouter } from '@angular/router';
 
 describe('LocacaoFormComponent', () => {
   let component: LocacaoFormComponent;
@@ -9,12 +9,15 @@ describe('LocacaoFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      // 2. Trocamos aqui também
-      imports: [LocacaoFormComponent], 
-    }).compileComponents();
+      imports: [LocacaoFormComponent],
+      providers: [
+        provideHttpClient(),
+        provideRouter([])
+      ]
+    })
+    .compileComponents();
 
-    // 3. E aqui na criação do componente
-    fixture = TestBed.createComponent(LocacaoFormComponent); 
+    fixture = TestBed.createComponent(LocacaoFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
