@@ -50,4 +50,17 @@ export class LocacaoService {
       this.salvarDados(); // Salva após encerrar
     }
   }
+  // Busca uma locação específica para preencher o formulário
+  getLocacaoById(id: number): Locacao | undefined {
+    return this.locacoes.find(l => l.id === id);
+  }
+
+  // Substitui os dados antigos pelos novos
+  atualizarLocacao(locacaoAtualizada: Locacao) {
+    const index = this.locacoes.findIndex(l => l.id === locacaoAtualizada.id);
+    if (index !== -1) {
+      this.locacoes[index] = locacaoAtualizada;
+      this.salvarDados();
+    }
+  }
 }

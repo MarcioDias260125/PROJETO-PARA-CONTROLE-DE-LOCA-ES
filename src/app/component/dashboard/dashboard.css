@@ -1,33 +1,11 @@
-/* Estilos que você já tinha... */
+/* =========================================
+   ESTRUTURA PRINCIPAL DO DASHBOARD
+========================================= */
 .dashboard-container {
   padding: 20px;
   font-family: Arial, sans-serif;
 }
 
-.alerta-vencimento {
-  background-color: #ffcccc;
-  border-left: 5px solid red;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 4px;
-}
-
-.alerta-vencimento h3 {
-  color: red;
-  margin-top: 0;
-}
-
-.alerta-vencimento ul {
-  list-style-type: none;
-  padding-left: 0;
-}
-
-.alerta-vencimento li {
-  margin-bottom: 10px;
-  line-height: 1.5;
-}
-
-/* NOVOS ESTILOS: Cabeçalho e Botão */
 .cabecalho {
   display: flex;
   justify-content: space-between;
@@ -35,20 +13,134 @@
   margin-bottom: 20px;
 }
 
-.btn-primary {
-  background-color: #007bff;
+/* =========================================
+   CARDS DE RESUMO (Cores Sergamix)
+========================================= */
+.cards-resumo {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  flex: 1;
+  padding: 20px;
+  border-radius: 8px;
   color: white;
-  padding: 10px 15px;
-  text-decoration: none;
-  border-radius: 4px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card h4 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
+.card .numero {
+  margin: 0;
+  font-size: 36px;
   font-weight: bold;
 }
 
-.btn-primary:hover {
-  background-color: #0056b3;
+.card-amarelo { 
+  background-color: #FFC107; 
+  color: #333; 
 }
 
-/* NOVOS ESTILOS: Tabela */
+.card-laranja { 
+  background-color: #F35900; 
+}
+
+.card-escuro { 
+  background-color: #2C3E50; 
+}
+
+/* =========================================
+   ALERTA DE VENCIMENTOS (Estilo Checklist)
+========================================= */
+.alerta-vencimento {
+  background-color: #fff8e1;
+  border: 1px solid #ffe082;
+  border-left: 5px solid #FFC107;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 8px;
+}
+
+.alerta-vencimento h3 {
+  color: #8f6c00;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.lista-alertas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alerta-item {
+  display: flex;
+  align-items: flex-start;
+  background-color: white;
+  padding: 12px 15px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.alerta-item:hover {
+  background-color: #fafafa;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.alerta-checkbox {
+  margin-right: 15px;
+  margin-top: 2px;
+}
+
+.alerta-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #F35900; /* Laranja Sergamix */
+}
+
+.alerta-conteudo p {
+  margin: 0 0 6px 0;
+  color: #333;
+}
+
+.texto-destaque {
+  color: #dc3545;
+}
+
+.alerta-contato {
+  display: inline-block;
+  background-color: #f1f3f5;
+  color: #495057;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+/* Ação visual ao marcar a checkbox */
+.alerta-item:has(input[type="checkbox"]:checked) {
+  opacity: 0.6;
+}
+
+.alerta-item:has(input[type="checkbox"]:checked) .alerta-texto {
+  text-decoration: line-through;
+}
+
+/* =========================================
+   TABELA DE LOCAÇÕES
+========================================= */
 .tabela-locacoes {
   width: 100%;
   border-collapse: collapse;
@@ -72,4 +164,36 @@
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 0.85em;
+}
+
+/* =========================================
+   BOTÕES DA TABELA
+========================================= */
+.btn-editar {
+  background-color: #FFC107;
+  color: #333;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+.btn-editar:hover {
+  background-color: #e0a800;
+}
+
+.btn-encerrar {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-encerrar:hover {
+  background-color: #c82333;
 }

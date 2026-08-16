@@ -1,19 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LocacaoForm } from './locacao-form';
+// 1. Corrigimos a importação para LocacaoFormComponent
+import { LocacaoFormComponent } from './locacao-form'; 
 
-describe('LocacaoForm', () => {
-  let component: LocacaoForm;
-  let fixture: ComponentFixture<LocacaoForm>;
+describe('LocacaoFormComponent', () => {
+  let component: LocacaoFormComponent;
+  let fixture: ComponentFixture<LocacaoFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LocacaoForm],
+      // 2. Trocamos aqui também
+      imports: [LocacaoFormComponent], 
     }).compileComponents();
 
-    fixture = TestBed.createComponent(LocacaoForm);
+    // 3. E aqui na criação do componente
+    fixture = TestBed.createComponent(LocacaoFormComponent); 
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

@@ -1,24 +1,53 @@
 <div class="dashboard-container">
   <div class="cabecalho">
     <h2>Painel de Controle 🚧</h2>
-    <a routerLink="/nova-locacao" class="btn-primary">+ Nova Locação</a>
   </div>
 
-  <!-- Sessão de Alertas -->
+  <!-- Caixas de Resumo (Totalizadores) -->
+  <div class="cards-resumo">
+    <!-- Card Amarelo Sergamix -->
+    <div class="card card-amarelo">
+      <h4>Em Andamento</h4>
+      <p class="numero">{{ totalEmAndamento }}</p>
+    </div>
+    <!-- Card Laranja Sergamix -->
+    <div class="card card-laranja">
+      <h4>Vencendo em Breve</h4>
+      <p class="numero">{{ totalVencendo }}</p>
+    </div>
+    <!-- Card Escuro (para contrastar e indicar fim) -->
+    <div class="card card-escuro">
+      <h4>Já Encerradas</h4>
+      <p class="numero">{{ totalEncerradas }}</p>
+    </div>
+  </div>
+
+  <!-- Sessão de Alertas com Checkbox -->
   <div *ngIf="locacoesProximasDoVencimento.length > 0" class="alerta-vencimento">
     <h3>⚠️ Atenção: Locações Vencendo!</h3>
-    <ul>
-      <li *ngFor="let loc of locacoesProximasDoVencimento">
-        A locação da <strong>{{ loc.nomeEquipamento }}</strong> na obra <em>{{ loc.nomeObra }}</em> 
-        vence em <strong>{{ calcularDiasRestantes(loc.dataFim) }} dia(s)</strong>! 
-        <br>
-        📞 Ligar para {{ loc.responsavelObra }} - {{ loc.telefoneResponsavel }}
-      </li>
-    </ul>
+    
+    <div class="lista-alertas">
+      <!-- Transformamos as bolinhas em pequenos blocos (cards) de tarefas -->
+      <label *ngFor="let loc of locacoesProximasDoVencimento" class="alerta-item">
+        
+        <div class="alerta-checkbox">
+          <input type="checkbox"> <!-- A nossa Checkbox -->
+        </div>
+        
+        <div class="alerta-conteudo">
+          <p class="alerta-texto">
+            A locação da <strong>{{ loc.nomeEquipamento }}</strong> na obra <em>{{ loc.nomeObra }}</em> 
+            vence em <strong class="texto-destaque">{{ calcularDiasRestantes(loc.dataFim) }} dia(s)</strong>!
+          </p>
+          <span class="alerta-contato">📞 Ligar para {{ loc.responsavelObra }} - {{ loc.telefoneResponsavel }}</span>
+        </div>
+        
+      </label>
+    </div>
   </div>
 
-  <!-- Tabela de Todas as Locações -->
-  <h3>Todas as Locações Ativas</h3>
+  <!-- Tabela SOMENTE das Locações Ativas -->
+  <h3>Locações na Obra (Ativas)</h3>
   
   <table class="tabela-locacoes">
     <thead>
@@ -28,58 +57,31 @@
         <th>Responsável</th>
         <th>Vencimento</th>
         <th>Status</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
-      <!-- O *ngFor repete essa linha para cada locação cadastrada -->
       <tr *ngFor="let loc of locacoesAtivas">
         <td>{{ loc.nomeEquipamento }}</td>
         <td>{{ loc.nomeObra }}</td>
         <td>{{ loc.responsavelObra }} ({{ loc.telefoneResponsavel }})</td>
         <td>{{ loc.dataFim | date:'dd/MM/yyyy' }}</td>
         <td><span class="badge-status">{{ loc.status }}</span></td>
+        <td>
+          <!-- Botão de Editar -->
+          <button [routerLink]="['/editar-locacao', loc.id]" class="btn-editar">
+            Editar
+          </button>
+          
+          <!-- Botão de Encerrar -->
+          <button (click)="encerrar(loc.id, loc.nomeEquipamento)" class="btn-encerrar">
+            Encerrar
+          </button>
+        </td>
       </tr>
       <tr *ngIf="locacoesAtivas.length === 0">
-        <td colspan="5" style="text-align: center;">Nenhuma locação ativa no momento.</td>
+        <td colspan="6" style="text-align: center;">Nenhuma máquina alugada no momento.</td>
       </tr>
-
-      
     </tbody>
-
-    <!-- Modifique o cabeçalho da tabela -->
-  <thead>
-    <tr>
-      <th>Equipamento</th>
-      <th>Obra</th>
-      <th>Responsável</th>
-      <th>Vencimento</th>
-      <th>Status</th>
-      <th>Ações</th> <!-- NOVA COLUNA -->
-    </tr>
-  </thead>
-  
-  <!-- Modifique o corpo da tabela -->
-  <tbody>
-    <tr *ngFor="let loc of locacoesAtivas">
-      <!-- ... suas outras colunas ... -->
-      <td>{{ loc.nomeEquipamento }}</td>
-      <td>{{ loc.nomeObra }}</td>
-      <td>{{ loc.responsavelObra }} ({{ loc.telefoneResponsavel }})</td>
-      <td>{{ loc.dataFim | date:'dd/MM/yyyy' }}</td>
-      <td><span class="badge-status">{{ loc.status }}</span></td>
-      
-      <!-- NOVO BOTÃO -->
-      <td>
-        <button 
-          *ngIf="loc.status === 'Ativa'"
-          (click)="encerrar(loc.id, loc.nomeEquipamento)" 
-          style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
-          Encerrar
-        </button>
-      </td>
-    </tr>
-  </tbody>
-
   </table>
-
 </div>

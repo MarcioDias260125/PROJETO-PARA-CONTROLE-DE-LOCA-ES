@@ -1,2 +1,15 @@
+<nav class="navbar">
+  <div class="logo">
+    <!-- Adicionamos a imagem da logo aqui -->
+    <img src="/sergamix-logo.png" alt="Sergamix" class="logo-img">
+  </div>
+  <ul class="nav-links">
+    <li><a routerLink="/dashboard" routerLinkActive="ativo">Dashboard</a></li>
+    <li><a routerLink="/nova-locacao" routerLinkActive="ativo">Nova Locação</a></li>
+    <li><a routerLink="/fornecedores" routerLinkActive="ativo">Fornecedores</a></li>
+  </ul>
+</nav>
 
-<router-outlet/>
+<main class="conteudo-principal">
+  <router-outlet></router-outlet>
+</main>

@@ -19,5 +19,7 @@ export const routes: Routes = [
     {
     path: 'nova-locacao',
     component: LocacaoFormComponent
-}
+},
+// Adicione esta linha junto com as outras rotas que você já tem:
+{ path: 'editar-locacao/:id', component: LocacaoFormComponent },
 ];

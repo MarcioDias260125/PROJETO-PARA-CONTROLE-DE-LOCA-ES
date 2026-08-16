@@ -2,24 +2,31 @@
   <h2>Cadastrar Nova Locação</h2>
   
   <form (ngSubmit)="salvar()">
+    
+    <!-- CAMPO ALTERADO: Agora é um menu de seleção (dropdown) -->
     <div class="form-group">
       <label>Equipamento:</label>
-      <input type="text" [(ngModel)]="novaLocacao.nomeEquipamento" name="equipamento" required>
+      <select [(ngModel)]="novaLocacao.nomeEquipamento" name="equipamento" required>
+        <option value="" disabled selected>Selecione o equipamento...</option>
+        <option *ngFor="let eq of equipamentosDisponiveis" [value]="eq">
+          {{ eq }}
+        </option>
+      </select>
     </div>
 
     <div class="form-group">
-      <label>Nome da Obra:</label>
-      <input type="text" [(ngModel)]="novaLocacao.nomeObra" name="obra" required>
+      <label>Nome da Obra / Local:</label>
+      <input type="text" [(ngModel)]="novaLocacao.nomeObra" name="obra" required placeholder="Ex: Edifício Central">
     </div>
 
     <div class="form-group">
       <label>Responsável:</label>
-      <input type="text" [(ngModel)]="novaLocacao.responsavelObra" name="responsavel" required>
+      <input type="text" [(ngModel)]="novaLocacao.responsavelObra" name="responsavel" required placeholder="Nome do mestre/engenheiro">
     </div>
 
     <div class="form-group">
       <label>Telefone:</label>
-      <input type="text" [(ngModel)]="novaLocacao.telefoneResponsavel" name="telefone" required>
+      <input type="text" [(ngModel)]="novaLocacao.telefoneResponsavel" name="telefone" required placeholder="(79) 90000-0000">
     </div>
 
     <div class="form-group">
