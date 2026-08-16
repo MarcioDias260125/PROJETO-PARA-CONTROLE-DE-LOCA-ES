@@ -16,12 +16,12 @@ export class DashboardComponent implements OnInit {
   
   locacoesAtivas: Locacao[] = [];
   locacoesProximasDoVencimento: Locacao[] = [];
+  todasLocacoes: Locacao[] = [];
   
   totalEmAndamento: number = 0;
   totalEncerradas: number = 0;
   totalVencendo: number = 0;
 
-  // Filtro para saber o que tem/passou na obra
   obraSelecionada: string = '';
   listaObras: string[] = [];
 
@@ -32,16 +32,18 @@ export class DashboardComponent implements OnInit {
   }
 
   carregarDados() {
-    const todas = this.locacaoService.getLocacoes();
-    
-    this.locacoesAtivas = todas.filter(l => l.status === 'Ativa');
-    this.totalEmAndamento = this.locacoesAtivas.length;
-    this.totalEncerradas = todas.filter(l => l.status === 'Encerrada').length;
+    this.locacaoService.getLocacoes().subscribe({
+      next: (todas) => {
+        this.todasLocacoes = todas;
+        this.locacoesAtivas = todas.filter(l => l.status === 'Ativa');
+        this.totalEmAndamento = this.locacoesAtivas.length;
+        this.totalEncerradas = todas.filter(l => l.status === 'Encerrada').length;
 
-    // Lista de obras únicas para o filtro
-    this.listaObras = Array.from(new Set(todas.map(l => l.nomeObra)));
-
-    this.verificarVencimentos(this.locacoesAtivas);
+        this.listaObras = Array.from(new Set(todas.map(l => l.nomeObra)));
+        this.verificarVencimentos(this.locacoesAtivas);
+      },
+      error: (err) => alert('Erro ao carregar locações da API: ' + err.message)
+    });
   }
 
   verificarVencimentos(locacoesAtivas: Locacao[]) {
@@ -67,13 +69,13 @@ export class DashboardComponent implements OnInit {
     if (diasStr) {
       const dias = parseInt(diasStr, 10);
       if (!isNaN(dias) && dias > 0) {
-        this.locacaoService.renovarLocacao(id, dias);
-        this.carregarDados();
+        this.locacaoService.renovarLocacao(id, dias).subscribe(() => {
+          this.carregarDados();
+        });
       }
     }
   }
 
-  // Ação de baixa completa com escolha de equipamento e confirmação
   darBaixaLocacao(loc: Locacao) {
     if (!loc.itens || loc.itens.length === 0) {
       alert('Não há equipamentos ativos nesta locação.');
@@ -82,7 +84,6 @@ export class DashboardComponent implements OnInit {
 
     let indexItem = 0;
 
-    // Se houver mais de um equipamento no mesmo contrato, solicita a escolha
     if (loc.itens.length > 1) {
       const listaOpcoes = loc.itens
         .map((item, idx) => `${idx + 1}: ${item.nomeEquipamento} (Qtd na obra: ${item.quantidade})`)
@@ -110,7 +111,6 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    // Janela de confirmação final
     const confirmacao = window.confirm(
       `CONFIRMAÇÃO DE BAIXA\n\n` +
       `Obra: ${loc.nomeObra}\n` +
@@ -120,12 +120,12 @@ export class DashboardComponent implements OnInit {
     );
 
     if (confirmacao) {
-      this.locacaoService.devolverParcial(loc.id, indexItem, qtd);
-      this.carregarDados();
+      this.locacaoService.devolverParcial(loc.id, indexItem, qtd).subscribe(() => {
+        this.carregarDados();
+      });
     }
   }
 
-  // Disparo de lembrete para você mesmo / WhatsApp
   notificarSelf(loc: Locacao) {
     const msg = `🚨 *SERGAMIX - LEMBRETE DE VENCIMENTO*%0A` +
                 `Obra: *${loc.nomeObra}*%0A` +
@@ -135,23 +135,16 @@ export class DashboardComponent implements OnInit {
     window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
   }
 
-  obterNomeEquipamentos(loc: any): string {
-    if (loc.itens && loc.itens.length > 0) {
-      return loc.itens.map((i: any) => `${i.quantidade}x ${i.nomeEquipamento}`).join(', ');
-    }
-    return loc.nomeEquipamento || 'Equipamento não especificado';
-  }
-
   encerrar(id: number, identificacao: string) {
     if (window.confirm(`Deseja realmente encerrar a ${identificacao}?`)) {
-      this.locacaoService.encerrarLocacao(id);
-      this.carregarDados();
+      this.locacaoService.encerrarLocacao(id).subscribe(() => {
+        this.carregarDados();
+      });
     }
   }
 
-  // Métodos para o Raio-X da Obra
   get locacoesDaObraSelecionada(): Locacao[] {
     if (!this.obraSelecionada) return [];
-    return this.locacaoService.getLocacoes().filter(l => l.nomeObra === this.obraSelecionada);
+    return this.todasLocacoes.filter(l => l.nomeObra === this.obraSelecionada);
   }
 }

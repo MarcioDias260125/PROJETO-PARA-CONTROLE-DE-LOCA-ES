@@ -1,95 +1,34 @@
 import { Injectable } from '@angular/core';
-import { Locacao, ItemDevolvido } from '../models/Locacao';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Locacao } from '../models/Locacao';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocacaoService {
-  private locacoes: Locacao[] = [];
+  private API_URL = `${environment.apiUrl}/locacoes`;
 
-  constructor() {
-    this.carregarDados();
+  constructor(private http: HttpClient) {}
+
+  getLocacoes(): Observable<Locacao[]> {
+    return this.http.get<Locacao[]>(this.API_URL);
   }
 
-  private carregarDados() {
-    const dados = localStorage.getItem('sergamix_locacoes');
-    if (dados) {
-      this.locacoes = JSON.parse(dados);
-    }
+  adicionarLocacao(locacao: Locacao): Observable<Locacao> {
+    return this.http.post<Locacao>(this.API_URL, locacao);
   }
 
-  private salvarDados() {
-    localStorage.setItem('sergamix_locacoes', JSON.stringify(this.locacoes));
+  renovarLocacao(id: number, dias: number): Observable<Locacao> {
+    return this.http.patch<Locacao>(`${this.API_URL}/${id}/renovar`, { dias });
   }
 
-  getLocacoes(): Locacao[] {
-    return this.locacoes;
+  devolverParcial(idLocacao: number, indexItem: number, quantidadeDevolver: number): Observable<any> {
+    return this.http.post(`${this.API_URL}/${idLocacao}/baixa`, { indexItem, quantidadeDevolver });
   }
 
-  getLocacaoById(id: number): Locacao | undefined {
-    return this.locacoes.find(l => l.id === id);
-  }
-
-  adicionarLocacao(locacao: Locacao) {
-    locacao.itensDevolvidos = [];
-    this.locacoes.push(locacao);
-    this.salvarDados();
-  }
-
-  atualizarLocacao(locacao: Locacao) {
-    const index = this.locacoes.findIndex(l => l.id === locacao.id);
-    if (index !== -1) {
-      this.locacoes[index] = locacao;
-      this.salvarDados();
-    }
-  }
-
-  // RENOVAÇÃO RÁPIDA: Adiciona X dias no vencimento
-  renovarLocacao(id: number, dias: number) {
-    const loc = this.getLocacaoById(id);
-    if (loc) {
-      const dataAtual = new Date(loc.dataFim);
-      dataAtual.setDate(dataAtual.getDate() + dias);
-      loc.dataFim = dataAtual;
-      this.salvarDados();
-    }
-  }
-
-  // DEVOLUÇÃO PARCIAL: Baixa uma quantidade do equipamento na obra
-  devolverParcial(idLocacao: number, indexItem: number, quantidadeDevolver: number) {
-    const loc = this.getLocacaoById(idLocacao);
-    if (!loc) return;
-
-    const item = loc.itens[indexItem];
-    if (item && quantidadeDevolver > 0 && quantidadeDevolver <= item.quantidade) {
-      item.quantidade -= quantidadeDevolver;
-
-      if (!loc.itensDevolvidos) loc.itensDevolvidos = [];
-      loc.itensDevolvidos.push({
-        nomeEquipamento: item.nomeEquipamento,
-        quantidade: quantidadeDevolver,
-        dataDevolucao: new Date()
-      });
-
-      // Se devolveu tudo do item, remove do contrato
-      if (item.quantidade === 0) {
-        loc.itens.splice(indexItem, 1);
-      }
-
-      // Se a obra não tem mais nenhum equipamento ativo, encerra a locação automaticamente
-      if (loc.itens.length === 0) {
-        loc.status = 'Encerrada';
-      }
-
-      this.salvarDados();
-    }
-  }
-
-  encerrarLocacao(id: number) {
-    const loc = this.getLocacaoById(id);
-    if (loc) {
-      loc.status = 'Encerrada';
-      this.salvarDados();
-    }
+  encerrarLocacao(id: number): Observable<any> {
+    return this.http.patch(`${this.API_URL}/${id}/encerrar`, {});
   }
 }
