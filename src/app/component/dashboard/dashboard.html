@@ -1,1 +1,21 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <h2>Painel de Controle 🚧</h2>
+
+  <!-- Sessão de Alertas -->
+  <div *ngIf="locacoesProximasDoVencimento.length > 0" class="alerta-vencimento">
+    
+    <h3>⚠️ Atenção: Locações Vencendo!</h3>
+    
+    <ul>
+      <li *ngFor="let loc of locacoesProximasDoVencimento">
+        A locação da <strong>{{ loc.nomeEquipamento }}</strong> na obra <em>{{ loc.nomeObra }}</em> 
+        vence em <strong>{{ calcularDiasRestantes(loc.dataFim) }} dia(s)</strong>! 
+        <br>
+        📞 Ligar para {{ loc.responsavelObra }} - {{ loc.telefoneResponsavel }}
+      </li>
+    </ul>
+  </div>
+
+  <h3>Todas as Locações Ativas</h3>
+  <!-- Tabela de locações virá aqui depois -->
+</div>
