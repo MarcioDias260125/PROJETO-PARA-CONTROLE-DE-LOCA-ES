@@ -1,13 +1,41 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+}
+
+model Locacao {
+  id                  Int             @id @default(autoincrement())
+  nomeObra            String
+  responsavelObra     String
+  telefoneResponsavel String
+  dataInicio          DateTime
+  dataFim             DateTime
+  status              String          @default("Ativa")
+  valorTotal          Float
+  numeroOrdemCompra   String?
+  numeroContrato      String?
+  tipoPeriodicidade   String?
+  fornecedor          String?
+  itens               ItemLocacao[]
+  itensDevolvidos     ItemDevolvido[]
+}
+
+model ItemLocacao {
+  id              Int     @id @default(autoincrement())
+  nomeEquipamento String
+  quantidade      Int
+  locacaoId       Int
+  locacao         Locacao @relation(fields: [locacaoId], references: [id], onDelete: Cascade)
+}
+
+model ItemDevolvido {
+  id              Int      @id @default(autoincrement())
+  nomeEquipamento String
+  quantidade      Int
+  dataDevolucao   DateTime @default(now())
+  locacaoId       Int
+  locacao         Locacao  @relation(fields: [locacaoId], references: [id], onDelete: Cascade)
 }

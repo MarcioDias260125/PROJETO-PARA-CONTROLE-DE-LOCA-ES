@@ -16,8 +16,16 @@ export class LocacaoService {
     return this.http.get<Locacao[]>(this.API_URL);
   }
 
+  getLocacaoById(id: number): Observable<Locacao> {
+    return this.http.get<Locacao>(`${this.API_URL}/${id}`);
+  }
+
   adicionarLocacao(locacao: Locacao): Observable<Locacao> {
     return this.http.post<Locacao>(this.API_URL, locacao);
+  }
+
+  atualizarLocacao(id: number, locacao: Locacao): Observable<Locacao> {
+    return this.http.put<Locacao>(`${this.API_URL}/${id}`, locacao);
   }
 
   renovarLocacao(id: number, dias: number): Observable<Locacao> {
