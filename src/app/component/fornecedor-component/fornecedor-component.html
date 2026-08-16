@@ -1,1 +1,39 @@
-<p>fornecedor-component works!</p>
+<!-- Container principal da tela de Fornecedores -->
+<div class="container">
+
+  <h2>Cadastro de Fornecedores</h2>
+  <hr>
+
+  <!-- Campo: Nome do fornecedor -->
+  <div class="campo">
+    <label>Nome do Fornecedor</label>
+    <!-- [(ngModel)] liga esse input diretamente à variável "nome" do
+         componente: o que o usuário digita atualiza a variável, e
+         se a variável mudar no código, o input também muda -->
+    <input type="text" [(ngModel)]="nome" placeholder="Ex: Locadora Silva Equipamentos">
+  </div>
+
+  <!-- Campo: Telefone do fornecedor -->
+  <div class="campo">
+    <label>Telefone</label>
+    <input type="text" [(ngModel)]="telefone" placeholder="Ex: (79) 99999-9999">
+  </div>
+
+  <!-- Botão que dispara o método salvar() do componente -->
+  <button (click)="salvar()">Cadastrar Fornecedor</button>
+
+  <hr>
+
+  <!-- Lista de fornecedores já cadastrados -->
+  <h3>Fornecedores Cadastrados</h3>
+
+  <!-- *ngFor repete esse bloco para cada item do array "fornecedores"
+       "let f of fornecedores" cria uma variável "f" representando
+       cada fornecedor da lista, um de cada vez -->
+  <ul>
+    <li *ngFor="let f of fornecedores">
+      {{ f.nome }} - {{ f.telefone }}
+    </li>
+  </ul>
+
+</div>
