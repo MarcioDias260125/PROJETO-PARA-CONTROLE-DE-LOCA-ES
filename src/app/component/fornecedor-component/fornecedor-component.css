@@ -1,49 +1,114 @@
-/* Estilo básico do card de cadastro — ajuste como quiser depois */
-
-.container {
-  max-width: 500px;
-  margin: 40px auto;
-  padding: 24px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+.container-fornecedores {
+  max-width: 950px;
+  margin: 30px auto;
+  padding: 0 15px;
 }
 
-.campo {
+.container-fornecedores h2 {
+  color: #2C3E50;
   margin-bottom: 20px;
 }
 
-label {
-  display: block;
+.container-fornecedores h3 {
+  color: #2C3E50;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+.card-cadastro {
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 8px;
+  border-top: 4px solid #F35900;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.flex-1 { flex: 1; min-width: 200px; }
+.flex-2 { flex: 2; min-width: 280px; }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
   font-weight: bold;
+  font-size: 0.88rem;
   margin-bottom: 6px;
+  color: #333;
 }
 
-input[type="text"] {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box; /* evita que o padding "estoure" a largura de 100% */
+.form-group input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
 }
 
-button {
-  background: #4f46e5;
+.btn-cadastrar {
+  background-color: #F35900;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.95rem;
   cursor: pointer;
+  margin-top: 10px;
 }
 
-button:hover {
-  background: #4338ca;
+.btn-cadastrar:hover {
+  background-color: #d44d00;
 }
 
-/* Lista de fornecedores cadastrados */
-ul {
-  list-style: none;
-  padding: 0;
+.tabela-fornecedores {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-li {
-  padding: 8px 0;
+.tabela-fornecedores th, 
+.tabela-fornecedores td {
+  padding: 12px 15px;
   border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.tabela-fornecedores th {
+  background-color: #2C3E50;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.tag-servico {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: bold;
+}
+
+.btn-excluir {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.btn-excluir:hover {
+  background-color: #bd2130;
 }

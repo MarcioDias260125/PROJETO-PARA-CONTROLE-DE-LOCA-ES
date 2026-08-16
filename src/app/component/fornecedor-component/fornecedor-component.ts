@@ -1,71 +1,78 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Fornecedor } from '../../models/Fornecedor';
-import { FornecedorService } from '../../service/fornecedor-service';
+
+export interface Fornecedor {
+  id: number;
+  nomeEmpresa: string;
+  cnpjOuCpf?: string;
+  telefone: string;
+  email?: string;
+  servicoPrestado?: string;
+}
 
 @Component({
-  selector: 'app-fornecedor-component',
+  selector: 'app-fornecedor',
   standalone: true,
-  // FormsModule é necessário para usar [(ngModel)] no HTML
-  // (liga o input à variável do componente).
-  // CommonModule é necessário para usar *ngFor no HTML
-  // (permite repetir um elemento para cada item de uma lista)
-  imports: [FormsModule, CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './fornecedor-component.html',
   styleUrl: './fornecedor-component.css'
 })
-export class FornecedorComponent {
+export class FornecedorComponent implements OnInit {
+  listaFornecedores: Fornecedor[] = [];
+  novoFornecedor: Partial<Fornecedor> = {};
 
-  // ===== Variáveis ligadas aos campos do formulário (via ngModel) =====
-  nome: string = ''
-  telefone: string = ''
-
-  // Lista de fornecedores já cadastrados, exibida na tela
-  // Começa vazia e é preenchida quando o componente carrega
-  fornecedores: Fornecedor[] = []
-
-  // Injeção do FornecedorService para chamar os métodos
-  // de listar/adicionar fornecedor na API
-  constructor(private fornecedorService: FornecedorService) { }
-
-  // ngOnInit é um "gancho de ciclo de vida" do Angular: roda
-  // automaticamente assim que o componente é carregado na tela.
-  // Aqui usamos para já buscar a lista de fornecedores ao abrir a página
   ngOnInit() {
-    this.carregarFornecedores()
+    this.carregarFornecedores();
   }
 
-  // Busca a lista atualizada de fornecedores na API
-  // e guarda no array "fornecedores" para exibir na tela
   carregarFornecedores() {
-    this.fornecedorService.listarFornecedores().subscribe((dados) => {
-      this.fornecedores = dados
-    })
+    const dados = localStorage.getItem('sergamix_fornecedores');
+    if (dados) {
+      this.listaFornecedores = JSON.parse(dados);
+    } else {
+      this.listaFornecedores = [
+        {
+          id: 1,
+          nomeEmpresa: 'Manutenção Sergipe LTDA',
+          cnpjOuCpf: '12.345.678/0001-90',
+          telefone: '(79) 98888-7777',
+          email: 'contato@manutencaose.com',
+          servicoPrestado: 'Manutenção Preventiva / Peças'
+        }
+      ];
+      this.salvarStorage();
+    }
   }
 
-  // Método chamado quando o usuário clica no botão "Cadastrar"
-  salvar() {
-
-    // Cria um novo objeto Fornecedor com os valores padrão do model
-    const fornecedor = new Fornecedor()
-
-    // Copia os valores digitados no formulário para o objeto
-    fornecedor.nome = this.nome
-    fornecedor.telefone = this.telefone
-
-    // Envia para a API. Como adicionarFornecedor() retorna um
-    // Observable, é preciso fazer .subscribe() para a requisição
-    // realmente ser disparada
-    this.fornecedorService.adicionarFornecedor(fornecedor).subscribe(() => {
-      this.limparDados()          // limpa o formulário
-      this.carregarFornecedores() // atualiza a lista exibida na tela
-    })
+  salvarStorage() {
+    localStorage.setItem('sergamix_fornecedores', JSON.stringify(this.listaFornecedores));
   }
 
-  // Reseta os campos do formulário para os valores iniciais
-  limparDados() {
-    this.nome = ''
-    this.telefone = ''
+  cadastrar() {
+    if (!this.novoFornecedor.nomeEmpresa || !this.novoFornecedor.telefone) {
+      alert('⚠️ Preencha pelo menos o Nome e o Telefone do fornecedor.');
+      return;
+    }
+
+    const fornecedorCompleto: Fornecedor = {
+      id: Math.floor(Math.random() * 10000),
+      nomeEmpresa: this.novoFornecedor.nomeEmpresa,
+      cnpjOuCpf: this.novoFornecedor.cnpjOuCpf || '',
+      telefone: this.novoFornecedor.telefone,
+      email: this.novoFornecedor.email || '',
+      servicoPrestado: this.novoFornecedor.servicoPrestado || ''
+    };
+
+    this.listaFornecedores.push(fornecedorCompleto);
+    this.salvarStorage();
+    this.novoFornecedor = {};
+  }
+
+  excluir(id: number, nome: string) {
+    if (confirm(`Deseja remover o fornecedor "${nome}"?`)) {
+      this.listaFornecedores = this.listaFornecedores.filter(f => f.id !== id);
+      this.salvarStorage();
+    }
   }
 }

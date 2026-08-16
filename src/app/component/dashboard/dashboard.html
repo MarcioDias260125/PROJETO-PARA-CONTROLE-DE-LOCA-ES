@@ -3,84 +3,117 @@
     <h2>Painel de Controle 🚧</h2>
   </div>
 
-  <!-- Caixas de Resumo (Totalizadores) -->
+  <!-- Caixas de Resumo -->
   <div class="cards-resumo">
-    <!-- Card Amarelo Sergamix -->
     <div class="card card-amarelo">
       <h4>Em Andamento</h4>
       <p class="numero">{{ totalEmAndamento }}</p>
     </div>
-    <!-- Card Laranja Sergamix -->
     <div class="card card-laranja">
       <h4>Vencendo em Breve</h4>
       <p class="numero">{{ totalVencendo }}</p>
     </div>
-    <!-- Card Escuro (para contrastar e indicar fim) -->
     <div class="card card-escuro">
       <h4>Já Encerradas</h4>
       <p class="numero">{{ totalEncerradas }}</p>
     </div>
   </div>
 
-  <!-- Sessão de Alertas com Checkbox -->
+  <!-- Alertas de Vencimento com Lembrete -->
   <div *ngIf="locacoesProximasDoVencimento.length > 0" class="alerta-vencimento">
     <h3>⚠️ Atenção: Locações Vencendo!</h3>
-    
     <div class="lista-alertas">
-      <!-- Transformamos as bolinhas em pequenos blocos (cards) de tarefas -->
-      <label *ngFor="let loc of locacoesProximasDoVencimento" class="alerta-item">
-        
-        <div class="alerta-checkbox">
-          <input type="checkbox"> <!-- A nossa Checkbox -->
-        </div>
-        
+      <div *ngFor="let loc of locacoesProximasDoVencimento" class="alerta-item" style="display: flex; justify-content: space-between; align-items: center;">
         <div class="alerta-conteudo">
           <p class="alerta-texto">
-            A locação da <strong>{{ loc.nomeEquipamento }}</strong> na obra <em>{{ loc.nomeObra }}</em> 
-            vence em <strong class="texto-destaque">{{ calcularDiasRestantes(loc.dataFim) }} dia(s)</strong>!
+            A obra <strong>{{ loc.nomeObra }}</strong> tem equipamentos vencendo em 
+            <strong class="texto-destaque">{{ calcularDiasRestantes(loc.dataFim) }} dia(s)</strong>!
           </p>
-          <span class="alerta-contato">📞 Ligar para {{ loc.responsavelObra }} - {{ loc.telefoneResponsavel }}</span>
+          <span class="alerta-contato">📞 {{ loc.responsavelObra }} ({{ loc.telefoneResponsavel }})</span>
         </div>
-        
-      </label>
+        <button (click)="notificarSelf(loc)" class="btn-zap">📲 Enviar Lembrete</button>
+      </div>
     </div>
   </div>
 
-  <!-- Tabela SOMENTE das Locações Ativas -->
+  <!-- Raio-X por Obra (Consulta do que Tem / Passou) -->
+  <div class="painel-obra-filtro" style="background: white; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #ddd;">
+    <h3>🔍 Consulta Rápida por Obra (O que tem / O que passou)</h3>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <label><strong>Selecione a Obra:</strong></label>
+      <select [(ngModel)]="obraSelecionada" style="padding: 8px; border-radius: 4px; min-width: 250px;">
+        <option value="">-- Selecione para consultar --</option>
+        <option *ngFor="let obra of listaObras" [value]="obra">{{ obra }}</option>
+      </select>
+    </div>
+
+    <div *ngIf="obraSelecionada" style="margin-top: 15px;">
+      <div *ngFor="let loc of locacoesDaObraSelecionada" style="background: #f9f9f9; padding: 12px; margin-bottom: 10px; border-left: 4px solid #F35900; border-radius: 4px;">
+        <p><strong>Contrato:</strong> {{ loc.numeroContrato || 'S/N' }} | <strong>Valor:</strong> R$ {{ (loc.valorTotal || 0) | number:'1.2-2' }} | <strong>Status:</strong> {{ loc.status }}</p>
+        
+        <p style="color: #2e7d32; font-weight: bold; margin-bottom: 5px;">🏗️ Equipamentos Atualmente na Obra:</p>
+        <ul *ngIf="loc.itens && loc.itens.length > 0">
+          <li *ngFor="let item of loc.itens">• {{ item.quantidade }}x {{ item.nomeEquipamento }}</li>
+        </ul>
+
+        <p style="color: #c62828; font-weight: bold; margin-top: 10px; margin-bottom: 5px;">📜 Histórico de Devoluções Parciais:</p>
+        <ul *ngIf="loc.itensDevolvidos && loc.itensDevolvidos.length > 0">
+          <li *ngFor="let dev of loc.itensDevolvidos">
+            ✔ {{ dev.quantidade }}x {{ dev.nomeEquipamento }} (Devolvido em {{ dev.dataDevolucao | date:'dd/MM/yyyy' }})
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABELA PRINCIPAL DE LOCAÇÕES ATIVAS -->
   <h3>Locações na Obra (Ativas)</h3>
-  
   <table class="tabela-locacoes">
     <thead>
       <tr>
-        <th>Equipamento</th>
-        <th>Obra</th>
-        <th>Responsável</th>
+        <th>Contrato / O.C.</th>
+        <th>Fornecedor</th>
+        <th>Equipamentos na Obra</th>
+        <th>Obra / Responsável</th>
+        <th>Valor Total</th>
         <th>Vencimento</th>
-        <th>Status</th>
         <th>Ações</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let loc of locacoesAtivas">
-        <td>{{ loc.nomeEquipamento }}</td>
-        <td>{{ loc.nomeObra }}</td>
-        <td>{{ loc.responsavelObra }} ({{ loc.telefoneResponsavel }})</td>
-        <td>{{ loc.dataFim | date:'dd/MM/yyyy' }}</td>
-        <td><span class="badge-status">{{ loc.status }}</span></td>
         <td>
-          <!-- Botão de Editar -->
-          <button [routerLink]="['/editar-locacao', loc.id]" class="btn-editar">
-            Editar
-          </button>
-          
-          <!-- Botão de Encerrar -->
-          <button (click)="encerrar(loc.id, loc.nomeEquipamento)" class="btn-encerrar">
-            Encerrar
-          </button>
+          <strong>{{ loc.numeroContrato || 'S/N' }}</strong>
+          <br>
+          <small *ngIf="loc.numeroOrdemCompra" style="color: #666;">OC: {{ loc.numeroOrdemCompra }}</small>
+        </td>
+        <td>{{ loc.fornecedor || 'Próprio' }}</td>
+        <td>
+          <div *ngFor="let item of loc.itens" style="margin-bottom: 4px;">
+            • {{ item.quantidade }}x {{ item.nomeEquipamento }}
+          </div>
+        </td>
+        <td>
+          <strong>{{ loc.nomeObra }}</strong><br>
+          <small>{{ loc.responsavelObra }} ({{ loc.telefoneResponsavel }})</small>
+        </td>
+        <td>
+          <strong style="color: #2c3e50;">R$ {{ (loc.valorTotal || 0) | number:'1.2-2' }}</strong>
+          <br>
+          <span class="tag-periodicidade">{{ loc.tipoPeriodicidade || 'Diária' }}</span>
+        </td>
+        <td>{{ loc.dataFim | date:'dd/MM/yyyy' }}</td>
+        <td>
+          <div class="grupo-botoes">
+            <button [routerLink]="['/editar-locacao', loc.id]" class="btn-editar">✏️ Editar</button>
+            <button (click)="darBaixaLocacao(loc)" class="btn-baixa">📦 Baixa</button>
+            <button (click)="renovar(loc.id)" class="btn-renovar">🔁 Renovar</button>
+            <button (click)="encerrar(loc.id, loc.nomeObra)" class="btn-encerrar">❌ Encerrar</button>
+          </div>
         </td>
       </tr>
       <tr *ngIf="locacoesAtivas.length === 0">
-        <td colspan="6" style="text-align: center;">Nenhuma máquina alugada no momento.</td>
+        <td colspan="7" style="text-align: center;">Nenhuma locação ativa no momento.</td>
       </tr>
     </tbody>
   </table>

@@ -1,45 +1,95 @@
 <div class="form-container">
-  <h2>Cadastrar Nova Locação</h2>
+  <h2>{{ isEdicao ? 'Editar Locação' : 'Cadastrar Nova Locação' }}</h2>
   
-  <form (ngSubmit)="salvar()">
-    
-    <!-- CAMPO ALTERADO: Agora é um menu de seleção (dropdown) -->
-    <div class="form-group">
-      <label>Equipamento:</label>
-      <select [(ngModel)]="novaLocacao.nomeEquipamento" name="equipamento" required>
-        <option value="" disabled selected>Selecione o equipamento...</option>
-        <option *ngFor="let eq of equipamentosDisponiveis" [value]="eq">
-          {{ eq }}
-        </option>
-      </select>
+  <form>
+    <!-- SEÇÃO 1: DOCUMENTAÇÃO E FORNECEDOR -->
+    <div class="form-row">
+      <div class="form-group flex-1">
+        <label>Nº Contrato de Locação:</label>
+        <input type="text" [(ngModel)]="novaLocacao.numeroContrato" name="numeroContrato" placeholder="Ex: CTR-2026/04">
+      </div>
+      <div class="form-group flex-1">
+        <label>Nº Ordem de Compra (O.C.):</label>
+        <input type="text" [(ngModel)]="novaLocacao.numeroOrdemCompra" name="numeroOrdemCompra" placeholder="Ex: OC-8842">
+      </div>
+      <div class="form-group flex-1">
+        <label>Fornecedor Parceiro:</label>
+        <select [(ngModel)]="novaLocacao.fornecedor" name="fornecedor">
+          <option value="">Próprio / Sergamix</option>
+          <option *ngFor="let f of listaFornecedores" [value]="f">{{ f }}</option>
+        </select>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label>Nome da Obra / Local:</label>
-      <input type="text" [(ngModel)]="novaLocacao.nomeObra" name="obra" required placeholder="Ex: Edifício Central">
+    <!-- SEÇÃO 2: DADOS DA OBRA -->
+    <div class="form-row">
+      <div class="form-group flex-2">
+        <label>Nome da Obra / Local:*</label>
+        <input type="text" [(ngModel)]="novaLocacao.nomeObra" name="obra" required placeholder="Ex: Mercado de Itabi">
+      </div>
+      <div class="form-group flex-1">
+        <label>Responsável:*</label>
+        <input type="text" [(ngModel)]="novaLocacao.responsavelObra" name="responsavel" required placeholder="Nome do mestre">
+      </div>
+      <div class="form-group flex-1">
+        <label>Telefone:*</label>
+        <input type="text" [(ngModel)]="novaLocacao.telefoneResponsavel" name="telefone" required placeholder="(79) 90000-0000">
+      </div>
     </div>
 
-    <div class="form-group">
-      <label>Responsável:</label>
-      <input type="text" [(ngModel)]="novaLocacao.responsavelObra" name="responsavel" required placeholder="Nome do mestre/engenheiro">
+    <!-- SEÇÃO 3: EQUIPAMENTOS -->
+    <div class="secao-equipamentos">
+      <label class="titulo-secao">Equipamentos Locados:*</label>
+      
+      <div *ngFor="let item of itensLocacao; let i = index" class="linha-equipamento">
+        <div class="form-group flex-3">
+          <select [(ngModel)]="item.nomeEquipamento" name="eq_{{i}}" required>
+            <option value="" disabled selected>Selecione o equipamento...</option>
+            <option *ngFor="let eq of equipamentosDisponiveis" [value]="eq">{{ eq }}</option>
+          </select>
+        </div>
+
+        <div class="form-group flex-1">
+          <input type="number" [(ngModel)]="item.quantidade" name="qtd_{{i}}" min="1" placeholder="Qtd">
+        </div>
+
+        <button type="button" class="btn-remover-item" (click)="removerEquipamento(i)" *ngIf="itensLocacao.length > 1">
+          ✕
+        </button>
+      </div>
+
+      <button type="button" class="btn-add-item" (click)="adicionarEquipamento()">
+        + Adicionar outro equipamento
+      </button>
     </div>
 
-    <div class="form-group">
-      <label>Telefone:</label>
-      <input type="text" [(ngModel)]="novaLocacao.telefoneResponsavel" name="telefone" required placeholder="(79) 90000-0000">
+    <!-- SEÇÃO 4: DATAS, PERIODICIDADE E VALOR -->
+    <div class="form-row">
+      <div class="form-group flex-1">
+        <label>Data Inicial:*</label>
+        <input type="date" [(ngModel)]="dataInicioStr" name="dataInicio" required>
+      </div>
+
+      <div class="form-group flex-1">
+        <label>Data Final (Previsão):*</label>
+        <input type="date" [(ngModel)]="dataFimStr" name="dataFim" required>
+      </div>
+
+      <div class="form-group flex-1">
+        <label>Periodicidade (Calculada):</label>
+        <div class="badge-periodicidade">{{ periodicidadeCalculada }}</div>
+      </div>
+
+      <div class="form-group flex-1">
+        <label>Valor Total (R$):*</label>
+        <input type="number" [(ngModel)]="novaLocacao.valorTotal" name="valorTotal" placeholder="0,00" step="0.01">
+      </div>
     </div>
 
-    <div class="form-group">
-      <label>Data de Início:</label>
-      <input type="date" [(ngModel)]="dataInicioStr" name="dataInicio" required>
+    <!-- BOTOES -->
+    <div class="botoes-form">
+      <button type="button" (click)="salvar()" class="btn-salvar">Salvar Locação</button>
+      <a routerLink="/dashboard" class="btn-voltar">Voltar</a>
     </div>
-
-    <div class="form-group">
-      <label>Data Fim (Previsão):</label>
-      <input type="date" [(ngModel)]="dataFimStr" name="dataFim" required>
-    </div>
-
-    <button type="submit" class="btn-salvar">Salvar Locação</button>
-    <a routerLink="/dashboard" class="btn-voltar">Voltar</a>
   </form>
 </div>
