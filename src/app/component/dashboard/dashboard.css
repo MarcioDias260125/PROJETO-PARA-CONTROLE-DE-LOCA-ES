@@ -1,3 +1,4 @@
+/* Estilos que você já tinha... */
 .dashboard-container {
   padding: 20px;
   font-family: Arial, sans-serif;
@@ -24,4 +25,51 @@
 .alerta-vencimento li {
   margin-bottom: 10px;
   line-height: 1.5;
+}
+
+/* NOVOS ESTILOS: Cabeçalho e Botão */
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* NOVOS ESTILOS: Tabela */
+.tabela-locacoes {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.tabela-locacoes th, .tabela-locacoes td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.tabela-locacoes th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.badge-status {
+  background-color: #28a745;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85em;
 }

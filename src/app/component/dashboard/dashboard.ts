@@ -40,4 +40,15 @@ export class DashboardComponent implements OnInit {
     const diferenca = dataFim.getTime() - hoje.getTime();
     return Math.ceil(diferenca / (1000 * 3600 * 24));
   }
+  encerrar(id: number, nomeEquipamento: string) {
+    const confirmacao = window.confirm(`Deseja realmente encerrar a locação da ${nomeEquipamento}?`);
+    
+    if (confirmacao) {
+      this.locacaoService.encerrarLocacao(id);
+      
+      // Recarrega as listas para remover a locação encerrada da visão principal (se desejar)
+      this.locacoesAtivas = this.locacaoService.getLocacoes();
+      this.verificarVencimentos();
+    }
+  }
 }

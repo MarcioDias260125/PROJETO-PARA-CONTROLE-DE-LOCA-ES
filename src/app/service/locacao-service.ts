@@ -5,20 +5,34 @@ import { Locacao } from '../models/Locacao';
   providedIn: 'root'
 })
 export class LocacaoService {
-  // Vamos começar com uma locação de teste na memória
-  private locacoes: Locacao[] = [
-    {
-      id: 1,
-      equipamentoId: 101,
-      nomeEquipamento: 'Betoneira 400L',
-      nomeObra: 'Edifício Aracaju',
-      responsavelObra: 'Carlos Silva',
-      telefoneResponsavel: '(79) 99999-0000',
-      dataInicio: new Date('2026-08-01'),
-      dataFim: new Date('2026-08-20'), // Vence em breve
-      status: 'Ativa'
+  private locacoes: Locacao[] = [];
+  
+  // Nome da "chave" onde vamos guardar os dados no navegador
+  private storageKey = 'controle_locacoes_dados';
+
+  constructor() {
+    this.carregarDados();
+  }
+
+  // 1. Carrega os dados quando o sistema abre
+  private carregarDados() {
+    const dadosSalvos = localStorage.getItem(this.storageKey);
+    
+    if (dadosSalvos) {
+      // O LocalStorage salva tudo como texto. Precisamos converter as datas de volta para o formato Date do JavaScript
+      const locacoesParse = JSON.parse(dadosSalvos);
+      this.locacoes = locacoesParse.map((loc: any) => ({
+        ...loc,
+        dataInicio: new Date(loc.dataInicio),
+        dataFim: new Date(loc.dataFim)
+      }));
     }
-  ];
+  }
+
+  // 2. Salva os dados sempre que houver alguma mudança
+  private salvarDados() {
+    localStorage.setItem(this.storageKey, JSON.stringify(this.locacoes));
+  }
 
   getLocacoes(): Locacao[] {
     return this.locacoes;
@@ -26,5 +40,14 @@ export class LocacaoService {
 
   adicionarLocacao(locacao: Locacao) {
     this.locacoes.push(locacao);
+    this.salvarDados(); // Salva após adicionar
+  }
+
+  encerrarLocacao(id: number) {
+    const locacao = this.locacoes.find(l => l.id === id);
+    if (locacao) {
+      locacao.status = 'Encerrada';
+      this.salvarDados(); // Salva após encerrar
+    }
   }
 }
