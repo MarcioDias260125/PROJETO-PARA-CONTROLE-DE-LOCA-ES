@@ -3,6 +3,11 @@ import { FornecedorComponent } from './component/fornecedor-component/fornecedor
 
 export const routes: Routes = [
     {
+        path: '',
+        redirectTo: 'fornecedores',
+        pathMatch: 'full'
+    },
+    {
         path: 'fornecedores',
         component: FornecedorComponent
     }
