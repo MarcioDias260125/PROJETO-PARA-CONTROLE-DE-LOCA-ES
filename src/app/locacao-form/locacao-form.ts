@@ -7,7 +7,8 @@ import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class LocacaoService {
+export class LocacaoFormComponent implements OnInit {
+  // ... restotante do código {
   private API_URL = `${environment.apiUrl}/locacoes`;
 
   constructor(private http: HttpClient) {}
